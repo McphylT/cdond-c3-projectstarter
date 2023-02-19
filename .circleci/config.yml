@@ -276,7 +276,7 @@ jobs:
 
   deploy-backend:
     docker:
-      -image: cimg/python:3.10
+      - image: cimg/python:3.10
     steps:
       # Checkout code from git
       - checkout
@@ -325,7 +325,7 @@ jobs:
 
   smoke-test:
     docker:
-      -image: cimg/base:stable
+      - image: cimg/base:stable
     steps:
       # Checkout code from git
       - checkout
