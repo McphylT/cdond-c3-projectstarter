@@ -305,7 +305,6 @@ jobs:
             npm install 
             npm run build
           # cd ..
-            pwd 
             ls -la
             tar -C backend -czvf artifact.tar.gz .
             cd .circleci/ansible
