@@ -301,11 +301,11 @@ jobs:
             echo NODE_ENV=production >> ".env"
 
             pwd
-            ls -la
+          # ls -la
             npm install 
             npm run build
           # cd ..
-            ls -la
+            # ls -la
             tar -C backend -czvf artifact.tar.gz .
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
