@@ -213,33 +213,31 @@ jobs:
       # - destroy-environment
            
 
-#   configure-infrastructure:
-#     docker:
-#       - image: python:3.10-alpine3.16
-#     steps:
-#       # Checkout code from git
-#       - checkout
-#       # Add ssh keys with fingerprint
-#       - add_ssh_keys:
-#           fingerprints: ["81:07:77:02:18:0a:65:1e:06:3e:45:f0:bc:3c:e1:97"]
-#       # attach workspace
-#       - attach_workspace: 
-#           at: ~/
-#       - run:
-#           name: Install dependencies
-#           command: |
-#             apk add --update --no-cache ansible tar gzip aws-cli openssh
+  configure-infrastructure:
+    docker:
+      - image: python:3.10-alpine3.16
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["81:07:77:02:18:0a:65:1e:06:3e:45:f0:bc:3c:e1:97"]
+      # attach workspace
+      - attach_workspace: 
+          at: ~/
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update --no-cache ansible tar gzip aws-cli openssh
           
-#       - run:
-#           name: Configure server
-#           command: |
-#             pwd
-#             cd .circleci/ansible
-#             ls -al
-#             ansible-playbook -i inventory.txt configure-server.yml
-#           no_output_timeout: 30m
-#       # Here's where you will add some code to rollback on failure
-#       - destroy-environment
+      - run:
+          name: Configure server
+          command: |
+            pwd
+            cd .circleci/ansible
+            ls -al
+            ansible-playbook -i inventory.txt configure-server.yml
+          no_output_timeout: 30m
+      # Here's where you will add some code to rollback on failure
+      - destroy-environment
                  
 
 #   run-migrations:
