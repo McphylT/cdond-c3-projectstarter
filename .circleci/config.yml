@@ -201,7 +201,7 @@ jobs:
           paths:
             - project/.circleci/ansible/inventory.txt
       # Here's where you will add some code to rollback on failure 
-      - destroy-environment:
+      - destroy-environment
            
 
   configure-infrastructure:
@@ -230,7 +230,7 @@ jobs:
             ansible-playbook -i inventory.txt configure-server.yml
           no_output_timeout: 30m
       # Here's where you will add some code to rollback on failure
-      - destroy-environment:
+      - destroy-environment
                  
 
   run-migrations:
@@ -259,7 +259,7 @@ jobs:
                 curl --insecure https://kvdb.io/595tJ1T5vE8WU4oyAAfezM//migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
      # Here's where you will add some code to rollback on failure      
-      - destroy-environment:
+      - destroy-environment
                    
 
   deploy-frontend:
@@ -301,9 +301,9 @@ jobs:
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
             
       # Here's where you will add some code to rollback on failure      
-      - destroy-environment:
+      - destroy-environment
                 
-      - revert-migrations:
+      - revert-migrations
                  
 
   deploy-backend:
@@ -350,9 +350,9 @@ jobs:
             ansible-playbook -i inventory.txt deploy-backend.yml
            
       # Here's where you will add some code to rollback on failure
-      - destroy-environment:
+      - destroy-environment
               
-      - revert-migrations:
+      - revert-migrations
                  
 
   smoke-test:
@@ -401,9 +401,9 @@ jobs:
               exit 2
             fi
       # Here's where you will add some code to rollback on failure 
-      - destroy-environment:
+      - destroy-environment
               
-      - revert-migrations:
+      - revert-migrations
                
 
   cloudfront-update:
@@ -438,9 +438,9 @@ jobs:
             echo OldWorkflowID: $(cat ~/project/OldWorkflowID.txt)
             echo CurrentWorkflowID: "${CIRCLE_WORKFLOW_ID:0:7}"
      # Here's where you will add some code to rollback on failure 
-      - destroy-environment:
+      - destroy-environment
               
-      - revert-migrations:
+      - revert-migrations
                
 
   cleanup:
