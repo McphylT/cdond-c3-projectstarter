@@ -34,7 +34,7 @@
     path: ~/backend_app_dir
     state: directory
 
-- name: "Copy artifcact into Instance"
+- name: "Copy artifact into Instance"
   become: true
   copy: 
     src: ~/project/artifact.tar.gz
@@ -48,4 +48,4 @@
     npm install
     npm run build
     pm2 stop all 
-    pm2 start npm --start
+    pm2 start npm -- start
