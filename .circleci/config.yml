@@ -357,8 +357,11 @@ jobs:
               --output text)
 
             # echo "API_URL=http://${BACKEND_PUBLIC_IP}"
-
             export API_URL=http://${BACKEND_PUBLIC_IP}:3030
+
+            echo "Sleeping for 1 minute"
+            sleep 60
+            
             if curl -v $API_URL/api/status | grep "ok"
             then
               exit 0
