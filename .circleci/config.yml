@@ -338,55 +338,48 @@ jobs:
       - revert-migrations
                  
 
-#   smoke-test:
-#     docker:
-#       - image: cimg/base:stable
-#     steps:
-#       # Checkout code from git
-#       - checkout
-#       - install_awscli
-#       - install_nodejs
-     
-#       - run:
-#           name: Get backend url
-#           command: |
-#             export BACKEND_IP=$(aws ec2 describe-instances \
-#             --query "Reservations[*].Instances[*].[PublicIpAddress]"\
-#             --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-#             --output text)
-#             echo ${BACKEND_IP}
+  smoke-test:
+    docker:
+      - image: python:3.10-alpine3.16
+    steps:
+      # Checkout code from git
+      - checkout
+      -  run:
+          name: Install dependencies
+          command: |
+            apk add --update --no-cache tar gzip nodejs npm curl aws-cli
+      - run:
+          name: Backend smoke test.
+          command: |
+            BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
+              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --output text)
 
-#             export API_URL="http://${BACKEND_IP}:3030"
-#             echo "API_URL = ${API_URL}"
-#             echo "Sleeping for a minute"
-#             sleep 60
+            echo "API_URL=http://${BACKEND_PUBLIC_IP}"
 
-#       - run:
-#           name: Backend smoke test.
-#           command: |
-#             export API_URL="http://${BACKEND_IP}:3030"
-#             echo "${API_URL}"
-#             if curl -v "${API_URL}/api/status" | grep "ok"
-#             then
-#                 return 0
-#             else
-#                 return 1
-#             fi
-#       - run:
-#           name: Frontend smoke test.
-#           command: |
-#             FRONTEND_WEBSITE=http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website.${AWS_DEFAULT_REGION}.amazonaws.com
-#             if curl -s $FRONTEND_WEBSITE | grep "Welcome"
-#             then
-#               # This is the intentional error, if "Welcome" is indeed in the response this step will exit with exit code 1
-#               exit 1
-#             else
-#               exit 2
-#             fi
-#       # Here's where you will add some code to rollback on failure 
-#       - destroy-environment
-              
-#       - revert-migrations
+            export API_URL=http://${BACKEND_PUBLIC_IP}:3030
+            if curl -s $API_URL/api/status | grep "ok"
+            then
+              exit 0
+            else
+              exit 1
+            fi
+
+      - run:
+          name: Frontend smoke test.
+          command: |
+            FRONTEND_WEBSITE=http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website.${AWS_DEFAULT_REGION}.amazonaws.com
+            if curl -s $FRONTEND_WEBSITE | grep "Welcome"
+            then
+              # This is the intentional error, if "Welcome" is indeed in the response this step will exit with exit code 1
+              exit 1
+            else
+              exit 2
+            fi
+      # Here's where you will add some code to rollback on failure 
+      - destroy-environment      
+      - revert-migrations
                
 
 #   cloudfront-update:
@@ -489,9 +482,9 @@ workflows:
           requires: [run-migrations]
       - deploy-backend:
           requires: [run-migrations]
-# #       - smoke-test:
-# #           requires: [deploy-backend, deploy-frontend]
-# #       - cloudfront-update:
-# #           requires: [smoke-test]
+      - smoke-test:
+          requires: [deploy-backend, deploy-frontend]
+      # - cloudfront-update:
+      #     requires: [smoke-test]
 # #       - cleanup:
 # #           requires: [cloudfront-update]
